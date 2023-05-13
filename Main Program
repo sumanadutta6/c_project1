@@ -1,99 +1,105 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Structure to store student data
-struct student {
-  char name[100];
-  int roll_number;
-  int marks[5];
-  float grade;
+#define MAX_STUDENTS 100
+
+struct Student {
+    char name[100];
+    int roll_number;
+    int marks;
+    char grade;
 };
 
-// Function to add a new student
+struct Student students[MAX_STUDENTS];
+int num_students = 0;
+
 void add_student() {
-  // Create a new student structure
-  struct student *new_student = malloc(sizeof(struct student));
-
-  // Prompt the user for the student's name
-  printf("Enter the student's name: ");
-  fgets(new_student->name, 100, stdin);
-
-  // Prompt the user for the student's roll number
-  printf("Enter the student's roll number: ");
-  scanf("%d", &new_student->roll_number);
-
-  // Prompt the user for the student's marks
-  for (int i = 0; i < 5; i++) {
-    printf("Enter the student's mark in subject %d: ", i + 1);
-    scanf("%d", &new_student->marks[i]);
-  }
-
-  // Calculate the student's grade
-  new_student->grade = (float)sum(new_student->marks) / 5;
-
-  // Add the student to the list of students
-  students[num_students++] = new_student;
-}
-
-// Function to find a student by roll number
-struct student *find_student(int roll_number) {
-  for (int i = 0; i < num_students; i++) {
-    if (students[i]->roll_number == roll_number) {
-      return students[i];
+    if (num_students >= MAX_STUDENTS) {
+        printf("Cannot add more students.\n");
+        return;
     }
-  }
-
-  return NULL;
-}
-
-// Function to print the list of students
-void print_students() {
-  for (int i = 0; i < num_students; i++) {
-    printf("Name: %s\n", students[i]->name);
-    printf("Roll number: %d\n", students[i]->roll_number);
-    printf("Marks: ");
-    for (int j = 0; j < 5; j++) {
-      printf("%d ", students[i]->marks[j]);
+    
+    struct Student new_student;
+    printf("Enter name: ");
+    scanf("%s", new_student.name);
+    printf("Enter roll number: ");
+    scanf("%d", &new_student.roll_number);
+    printf("Enter marks: ");
+    scanf("%d", &new_student.marks);
+    
+    // Calculate grade
+    if (new_student.marks >= 90) {
+        new_student.grade = 'A';
+    } else if (new_student.marks >= 80) {
+        new_student.grade = 'B';
+    } else if (new_student.marks >= 70) {
+        new_student.grade = 'C';
+    } else if (new_student.marks >= 60) {
+        new_student.grade = 'D';
+    } else {
+        new_student.grade = 'F';
     }
-    printf("\nGrade: %.2f\n", students[i]->grade);
-  }
+    
+    students[num_students++] = new_student;
+    printf("Student added.\n");
 }
 
-// Function to calculate the sum of an array of integers
-int sum(int *array) {
-  int sum = 0;
-  for (int i = 0; i < 5; i++) {
-    sum += array[i];
-  }
-  return sum;
+void print_student(int student_id) {
+    if (student_id >= num_students) {
+        printf("Invalid student ID.\n");
+        return;
+    }
+    
+    struct Student student = students[student_id];
+    printf("Name: %s\n", student.name);
+    printf("Roll Number: %d\n", student.roll_number);
+    printf("Marks: %d\n", student.marks);
+    printf("Grade: %c\n", student.grade);
 }
 
-// Main function
+void print_all_students() {
+    if (num_students == 0) {
+        printf("No students found.\n");
+        return;
+    }
+    
+    printf("Student Data:\n");
+    for (int i = 0; i < num_students; i++) {
+        printf("Student ID: %d\n", i);
+        print_student(i);
+        printf("\n");
+    }
+}
+
 int main() {
-  // Initialize the number of students
-  num_students = 0;
-
-  // Create an array to store the students
-  struct student *students = malloc(sizeof(struct student) * 100);
-
-  // Add some students
-  add_student();
-  add_student();
-  add_student();
-
-  // Print the list of students
-  print_students();
-
-  // Find a student by roll number
-  struct student *student = find_student(1234);
-  if (student != NULL) {
-    printf("Found student: %s\n", student->name);
-  } else {
-    printf("Student not found.\n");
-  }
-
-  // Free the memory allocated for the students
-  free(students);
-
-  return 0;
+    int choice;
+    while (1) {
+        printf("\nStudent Management System\n");
+        printf("1. Add student\n");
+        printf("2. Print student\n");
+        printf("3. Print all students\n");
+        printf("4. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1:
+                add_student();
+                break;
+            case 2:
+                printf("Enter student ID: ");
+                int student_id;
+                scanf("%d", &student_id);
+                print_student(student_id);
+                break;
+            case 3:
+                print_all_students();
+                break;
+            case 4:
+                printf("Exiting program.\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
 }
