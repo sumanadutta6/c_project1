@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to store student data
+struct student {
+  char name[100];
+  int roll_number;
+  int marks[5];
+  float grade;
+};
+
+// Function to add a new student
+void add_student() {
+  // Create a new student structure
+  struct student *new_student = malloc(sizeof(struct student));
+
+  // Prompt the user for the student's name
+  printf("Enter the student's name: ");
+  fgets(new_student->name, 100, stdin);
+
+  // Prompt the user for the student's roll number
+  printf("Enter the student's roll number: ");
+  scanf("%d", &new_student->roll_number);
+
+  // Prompt the user for the student's marks
+  for (int i = 0; i < 5; i++) {
+    printf("Enter the student's mark in subject %d: ", i + 1);
+    scanf("%d", &new_student->marks[i]);
+  }
+
+  // Calculate the student's grade
+  new_student->grade = (float)sum(new_student->marks) / 5;
+
+  // Add the student to the list of students
+  students[num_students++] = new_student;
+}
+
+// Function to find a student by roll number
+struct student *find_student(int roll_number) {
+  for (int i = 0; i < num_students; i++) {
+    if (students[i]->roll_number == roll_number) {
+      return students[i];
+    }
+  }
+
+  return NULL;
+}
+
+// Function to print the list of students
+void print_students() {
+  for (int i = 0; i < num_students; i++) {
+    printf("Name: %s\n", students[i]->name);
+    printf("Roll number: %d\n", students[i]->roll_number);
+    printf("Marks: ");
+    for (int j = 0; j < 5; j++) {
+      printf("%d ", students[i]->marks[j]);
+    }
+    printf("\nGrade: %.2f\n", students[i]->grade);
+  }
+}
+
+// Function to calculate the sum of an array of integers
+int sum(int *array) {
+  int sum = 0;
+  for (int i = 0; i < 5; i++) {
+    sum += array[i];
+  }
+  return sum;
+}
+
+// Main function
+int main() {
+  // Initialize the number of students
+  num_students = 0;
+
+  // Create an array to store the students
+  struct student *students = malloc(sizeof(struct student) * 100);
+
+  // Add some students
+  add_student();
+  add_student();
+  add_student();
+
+  // Print the list of students
+  print_students();
+
+  // Find a student by roll number
+  struct student *student = find_student(1234);
+  if (student != NULL) {
+    printf("Found student: %s\n", student->name);
+  } else {
+    printf("Student not found.\n");
+  }
+
+  // Free the memory allocated for the students
+  free(students);
+
+  return 0;
+}
